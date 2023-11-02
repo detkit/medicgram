@@ -13,8 +13,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { useUserContext } from '@/context/AuthContext';
-import { useLoginAccount } from '@/lib/react-query/queries';
-import { LoginValidation } from '@/lib/validation';
+import { useSignInAccount } from '@/lib/react-query/queries';
+import { SigninValidation } from '@/lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
@@ -24,25 +24,25 @@ const LoginForm = () => {
 	const { toast } = useToast();
 	const navigate = useNavigate();
 	const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
-	// Query
-	const { mutateAsync: logInAccount, isLoading } = useLoginAccount();
 
-	const form = useForm<z.infer<typeof LoginValidation>>({
-		resolver: zodResolver(LoginValidation),
+	// Query
+	const { mutateAsync: signInAccount, isLoading } = useSignInAccount();
+
+	const form = useForm<z.infer<typeof SigninValidation>>({
+		resolver: zodResolver(SigninValidation),
 		defaultValues: {
 			email: '',
 			password: '',
 		},
 	});
 
-	async function onSubmit(values: z.infer<typeof LoginValidation>) {
-		const session = await logInAccount({
-			email: values.email,
-			password: values.password,
-		});
+	const handleSignin = async (user: z.infer<typeof SigninValidation>) => {
+		const session = await signInAccount(user);
 
 		if (!session) {
-			return toast({ title: 'Log In failed. Please try again.' });
+			toast({ title: 'Login failed. Please try again.' });
+
+			return;
 		}
 
 		const isLoggedIn = await checkAuthUser();
@@ -52,26 +52,25 @@ const LoginForm = () => {
 
 			navigate('/');
 		} else {
-			return toast({ title: 'Sign up faile. Please try again' });
+			toast({ title: 'Login failed. Please try again.' });
+
+			return;
 		}
-	}
+	};
 
 	return (
-		<div>
-			<Form {...form}>
-				<div className='flex-col sm:w-420 flex-center'>
-					<img src='/assets/images/logo.svg' />
+		<Form {...form}>
+			<div className='flex-col sm:w-420 flex-center'>
+				<img src='/assets/images/logo.svg' alt='logo' />
 
-					<h2 className='pt-5 h3-bold md:h2-bold sm:pt-12'>
-						Log in to your account
-					</h2>
-					<p className='mt-2 text-light-3 small-medium md:base-regular'>
-						Welcome back! Please enter your details
-					</p>
-				</div>
-
+				<h2 className='pt-5 h3-bold md:h2-bold sm:pt-12'>
+					Log in to your account
+				</h2>
+				<p className='mt-2 text-light-3 small-medium md:base-regular'>
+					Welcome back! Please enter your details.
+				</p>
 				<form
-					onSubmit={form.handleSubmit(onSubmit)}
+					onSubmit={form.handleSubmit(handleSignin)}
 					className='flex flex-col w-full gap-5 mt-4'
 				>
 					<FormField
@@ -79,10 +78,12 @@ const LoginForm = () => {
 						name='email'
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Email</FormLabel>
+								<FormLabel className='shad-form_label'>
+									Email
+								</FormLabel>
 								<FormControl>
 									<Input
-										type='email'
+										type='text'
 										className='shad-input'
 										{...field}
 									/>
@@ -97,7 +98,9 @@ const LoginForm = () => {
 						name='password'
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Password</FormLabel>
+								<FormLabel className='shad-form_label'>
+									Password
+								</FormLabel>
 								<FormControl>
 									<Input
 										type='password'
@@ -109,6 +112,7 @@ const LoginForm = () => {
 							</FormItem>
 						)}
 					/>
+
 					<Button type='submit' className='shad-button_primary'>
 						{isLoading || isUserLoading ? (
 							<div className='gap-2 flex-center'>
@@ -120,7 +124,7 @@ const LoginForm = () => {
 					</Button>
 
 					<p className='mt-2 text-center text-small-regular text-light-2'>
-						Don't have an account?
+						Don&apos;t have an account?
 						<Link
 							to='/sign-up'
 							className='ml-1 text-primary-500 text-small-semibold'
@@ -129,8 +133,8 @@ const LoginForm = () => {
 						</Link>
 					</p>
 				</form>
-			</Form>
-		</div>
+			</div>
+		</Form>
 	);
 };
 

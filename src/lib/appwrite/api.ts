@@ -50,7 +50,7 @@ export async function saveUserToDB(user: {
 	}
 }
 
-export async function logInAccount(user: { email: string; password: string }) {
+export async function signInAccount(user: { email: string; password: string }) {
 	try {
 		const session = await account.createEmailSession(
 			user.email,

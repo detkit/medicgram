@@ -18,9 +18,9 @@ import {
 	getUserPosts,
 	getUsers,
 	likePost,
-	logInAccount,
 	savePost,
 	searchPosts,
+	signInAccount,
 	signOutAccount,
 	updatePost,
 	updateUser,
@@ -38,10 +38,10 @@ export const useCreateUserAccount = () => {
 	});
 };
 
-export const useLoginAccount = () => {
+export const useSignInAccount = () => {
 	return useMutation({
 		mutationFn: (user: { email: string; password: string }) =>
-			logInAccount(user),
+			signInAccount(user),
 	});
 };
 

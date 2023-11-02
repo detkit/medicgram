@@ -1,7 +1,7 @@
 import { Toaster } from '@/components/ui/toaster';
 import { Route, Routes } from 'react-router-dom';
 import AuthLayout from './_auth/AuthLayout';
-import LoginForm from './_auth/forms/LoginForm';
+import SigninForm from './_auth/forms/SigninForm';
 import SignupForm from './_auth/forms/SignupForm';
 import RootLayout from './_root/RootLayout';
 import {
@@ -23,7 +23,7 @@ export default function App() {
 			<Routes>
 				{/* public routes */}
 				<Route element={<AuthLayout />}>
-					<Route path='/login' element={<LoginForm />} />
+					<Route path='/login' element={<SigninForm />} />
 					<Route path='/sign-up' element={<SignupForm />} />
 				</Route>
 
